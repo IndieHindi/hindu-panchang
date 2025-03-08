@@ -1,133 +1,121 @@
 import React, { useState } from 'react';
+import { format, startOfMonth, endOfMonth, eachDayOfInterval } from 'date-fns';
 import { useQuery } from '@tanstack/react-query';
-import { format, isSameMonth, isToday } from 'date-fns';
-import { Festival } from '../../types/panchang';
-import { BellIcon, BellSlashIcon } from '@heroicons/react/24/outline';
+import PanchangService from '../../services/PanchangService';
+import { DailyPanchang, Location, Festival } from '../../types/panchang';
 
 interface FestivalCalendarProps {
-  onNotificationToggle?: (festival: Festival) => void;
+  onNotificationToggle: (festival: Festival) => void;
 }
+
+const defaultLocation: Location = {
+  latitude: 28.6139,  // New Delhi
+  longitude: 77.2090,
+  timezone: 'Asia/Kolkata',
+  name: 'New Delhi',
+};
 
 export default function FestivalCalendar({ onNotificationToggle }: FestivalCalendarProps) {
   const [selectedMonth, setSelectedMonth] = useState(new Date());
-  const [notificationEnabled, setNotificationEnabled] = useState<Record<string, boolean>>({});
+  const startDate = startOfMonth(selectedMonth);
+  const endDate = endOfMonth(selectedMonth);
+  const days = eachDayOfInterval({ start: startDate, end: endDate });
 
-  const { data: festivals, isLoading } = useQuery<Festival[]>({
-    queryKey: ['festivals', format(selectedMonth, 'yyyy-MM')],
+  const { data: monthData, isLoading, error, isError } = useQuery<DailyPanchang[]>({
+    queryKey: ['monthlyFestivals', format(selectedMonth, 'yyyy-MM')],
     queryFn: async () => {
-      // TODO: Implement actual API call
-      return [
-        {
-          name: 'Ram Navami',
-          date: new Date('2024-04-17'),
-          description: 'Birthday of Lord Rama',
-          type: 'major',
-          significance: 'Celebrates the birth of Lord Rama, the seventh avatar of Vishnu',
-        },
-        {
-          name: 'Hanuman Jayanti',
-          date: new Date('2024-04-23'),
-          description: 'Birthday of Lord Hanuman',
-          type: 'major',
-          significance: 'Celebrates the birth of Lord Hanuman',
-        },
-      ];
+      const promises = days.map(day => 
+        PanchangService.getInstance().calculateDailyPanchang(day, defaultLocation)
+      );
+      return Promise.all(promises);
     },
   });
 
-  const toggleNotification = (festival: Festival) => {
-    setNotificationEnabled(prev => ({
-      ...prev,
-      [festival.name]: !prev[festival.name],
-    }));
-    onNotificationToggle?.(festival);
-  };
+  if (isLoading) {
+    return (
+      <div className="flex items-center justify-center min-h-[50vh]">
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary-600"></div>
+        <span className="ml-3 text-gray-600 dark:text-gray-400">Loading festival data...</span>
+      </div>
+    );
+  }
+
+  if (isError) {
+    return (
+      <div className="text-red-600 p-4 rounded-lg bg-red-50 dark:bg-red-900/20">
+        <p className="font-medium">Error loading festival data</p>
+        <p className="mt-1 text-sm">{error instanceof Error ? error.message : 'An unexpected error occurred'}</p>
+      </div>
+    );
+  }
+
+  const festivals = monthData?.flatMap(day => day.festivals) || [];
 
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <h2 className="text-2xl font-bold">
-          Festivals & Important Dates
+          Festivals & Important Dates - {format(selectedMonth, 'MMMM yyyy')}
         </h2>
         <div className="flex gap-2">
           <button
             onClick={() => setSelectedMonth(date => new Date(date.getFullYear(), date.getMonth() - 1))}
             className="btn btn-secondary"
           >
-            Previous
+            Previous Month
           </button>
           <button
             onClick={() => setSelectedMonth(date => new Date(date.getFullYear(), date.getMonth() + 1))}
             className="btn btn-secondary"
           >
-            Next
+            Next Month
           </button>
         </div>
       </div>
 
-      {isLoading ? (
-        <div className="flex items-center justify-center py-12">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary-600"></div>
-        </div>
-      ) : festivals && festivals.length > 0 ? (
-        <div className="space-y-4">
-          {festivals
-            .filter(festival => isSameMonth(festival.date, selectedMonth))
-            .map(festival => (
-              <div
-                key={festival.name}
-                className={`
-                  card flex items-start justify-between
-                  ${isToday(festival.date) ? 'ring-2 ring-primary-500' : ''}
-                `}
-              >
-                <div className="space-y-2">
-                  <div className="flex items-center gap-2">
-                    <h3 className="text-lg font-semibold">{festival.name}</h3>
-                    <span className={`
-                      px-2 py-0.5 text-xs rounded-full
-                      ${festival.type === 'major' 
-                        ? 'bg-primary-100 text-primary-800 dark:bg-primary-900 dark:text-primary-200'
-                        : 'bg-gray-100 text-gray-800 dark:bg-gray-800 dark:text-gray-200'
-                      }
-                    `}>
-                      {festival.type}
-                    </span>
-                  </div>
+      {festivals.length > 0 ? (
+        <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+          {festivals.map((festival, index) => (
+            <div
+              key={`${festival.name}-${index}`}
+              className="p-4 bg-white dark:bg-gray-800 rounded-lg shadow-sm"
+            >
+              <div className="flex justify-between items-start">
+                <div>
+                  <h3 className="font-semibold text-lg">{festival.name}</h3>
                   <p className="text-sm text-gray-600 dark:text-gray-400">
-                    {format(festival.date, 'EEEE, MMMM d, yyyy')}
+                    {format(festival.date, 'MMMM d, yyyy')}
                   </p>
-                  <p className="text-sm text-gray-600 dark:text-gray-400">
-                    {festival.description}
-                  </p>
-                  {festival.significance && (
-                    <p className="text-sm text-gray-600 dark:text-gray-400">
-                      <span className="font-medium">Significance:</span> {festival.significance}
-                    </p>
-                  )}
                 </div>
                 <button
-                  onClick={() => toggleNotification(festival)}
-                  className={`
-                    p-2 rounded-full transition-colors
-                    ${notificationEnabled[festival.name]
-                      ? 'text-primary-600 hover:bg-primary-50 dark:text-primary-400 dark:hover:bg-primary-900/50'
-                      : 'text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-800'
-                    }
-                  `}
+                  onClick={() => onNotificationToggle(festival)}
+                  className="text-primary-600 hover:text-primary-700"
                 >
-                  {notificationEnabled[festival.name] ? (
-                    <BellIcon className="h-6 w-6" />
-                  ) : (
-                    <BellSlashIcon className="h-6 w-6" />
-                  )}
+                  🔔
                 </button>
               </div>
-            ))}
+              <p className="mt-2 text-sm text-gray-700 dark:text-gray-300">
+                {festival.description}
+              </p>
+              <p className="mt-1 text-sm text-gray-600 dark:text-gray-400">
+                {festival.significance}
+              </p>
+              <div className="mt-2">
+                <span className={`
+                  inline-block px-2 py-1 text-xs rounded-full
+                  ${festival.type === 'major' ? 'bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-200' :
+                    festival.type === 'tithi' ? 'bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200' :
+                    'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200'}
+                `}>
+                  {festival.type}
+                </span>
+              </div>
+            </div>
+          ))}
         </div>
       ) : (
-        <div className="text-center py-12 text-gray-500 dark:text-gray-400">
-          No festivals in {format(selectedMonth, 'MMMM yyyy')}
+        <div className="text-center py-8 text-gray-600 dark:text-gray-400">
+          No festivals or important dates this month
         </div>
       )}
     </div>

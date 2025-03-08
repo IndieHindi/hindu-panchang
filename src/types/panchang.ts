@@ -38,17 +38,17 @@ export interface AstronomicalInfo {
 
 export interface Muhurta {
   name: string;
+  type: 'auspicious' | 'inauspicious' | 'neutral';
+  description: string;
   startTime: Date;
   endTime: Date;
-  type: 'auspicious' | 'inauspicious';
-  description: string;
 }
 
 export interface Festival {
   name: string;
+  type: 'major' | 'tithi' | 'nakshatra' | 'special';
   date: Date;
   description: string;
-  type: 'major' | 'minor';
   significance: string;
 }
 

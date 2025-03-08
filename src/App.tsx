@@ -7,6 +7,7 @@ import MonthlyCalendar from './components/Calendar/MonthlyCalendar';
 import Rashifal from './pages/Rashifal';
 import FestivalCalendar from './components/Festivals/FestivalCalendar';
 import InteractiveLearning from './components/Learn/InteractiveLearning';
+import Visualization from './pages/Visualization';
 
 // Default location (New Delhi)
 const defaultLocation = {
@@ -17,7 +18,16 @@ const defaultLocation = {
 };
 
 // Create a client
-const queryClient = new QueryClient();
+const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      staleTime: 5 * 60 * 1000, // Data stays fresh for 5 minutes
+      gcTime: 30 * 60 * 1000, // Keep unused data in cache for 30 minutes
+      retry: 2, // Retry failed requests twice
+      refetchOnWindowFocus: false, // Don't refetch when window regains focus
+    },
+  },
+});
 
 function App() {
   return (
@@ -33,6 +43,7 @@ function App() {
           <main className="container mx-auto px-4 py-8">
             <Routes>
               <Route path="/" element={<DailyPanchang />} />
+              <Route path="/daily" element={<DailyPanchang />} />
               <Route 
                 path="/calendar" 
                 element={<MonthlyCalendar location={defaultLocation} />} 
@@ -41,11 +52,25 @@ function App() {
               <Route 
                 path="/festivals" 
                 element={<FestivalCalendar onNotificationToggle={festival => {
-                  // TODO: Implement notification handling
-                  console.log('Toggle notification for:', festival.name);
+                  if (Notification.permission === 'granted') {
+                    new Notification(`Festival Notification: ${festival.name}`, {
+                      body: `${festival.description}\nDate: ${festival.date.toLocaleDateString()}`,
+                      icon: '/om.svg'
+                    });
+                  } else if (Notification.permission !== 'denied') {
+                    Notification.requestPermission().then(permission => {
+                      if (permission === 'granted') {
+                        new Notification(`Festival Notification: ${festival.name}`, {
+                          body: `${festival.description}\nDate: ${festival.date.toLocaleDateString()}`,
+                          icon: '/om.svg'
+                        });
+                      }
+                    });
+                  }
                 }} />} 
               />
               <Route path="/learn" element={<InteractiveLearning />} />
+              <Route path="/visualization" element={<Visualization />} />
             </Routes>
           </main>
 

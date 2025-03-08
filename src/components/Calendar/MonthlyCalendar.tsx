@@ -16,14 +16,20 @@ export default function MonthlyCalendar({ location }: MonthlyCalendarProps) {
   const days = eachDayOfInterval({ start: startDate, end: endDate });
 
   // Fetch Panchang data for the entire month
-  const { data: monthData, isLoading } = useQuery<DailyPanchang[]>({
+  const { data: monthData, isLoading, error, isError } = useQuery<DailyPanchang[]>({
     queryKey: ['monthlyPanchang', format(selectedMonth, 'yyyy-MM'), location],
     queryFn: async () => {
-      const promises = days.map(day => 
-        PanchangService.getInstance().calculateDailyPanchang(day, location)
-      );
-      return Promise.all(promises);
+      try {
+        const promises = days.map(day => 
+          PanchangService.getInstance().calculateDailyPanchang(day, location)
+        );
+        return await Promise.all(promises);
+      } catch (error) {
+        console.error('Error fetching monthly panchang data:', error);
+        throw error;
+      }
     },
+    enabled: !!location, // Only run query when we have location
   });
 
   const getLunarPhaseIcon = (phase: number) => {
@@ -43,6 +49,24 @@ export default function MonthlyCalendar({ location }: MonthlyCalendarProps) {
       format(data.date, 'yyyy-MM-dd') === format(date, 'yyyy-MM-dd')
     );
   };
+
+  if (isLoading) {
+    return (
+      <div className="flex items-center justify-center min-h-[50vh]">
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary-600"></div>
+        <span className="ml-3 text-gray-600 dark:text-gray-400">Loading calendar data...</span>
+      </div>
+    );
+  }
+
+  if (isError) {
+    return (
+      <div className="text-red-600 p-4 rounded-lg bg-red-50 dark:bg-red-900/20">
+        <p className="font-medium">Error loading calendar data</p>
+        <p className="mt-1 text-sm">{error instanceof Error ? error.message : 'An unexpected error occurred'}</p>
+      </div>
+    );
+  }
 
   return (
     <div className="space-y-4">
@@ -121,12 +145,6 @@ export default function MonthlyCalendar({ location }: MonthlyCalendarProps) {
           );
         })}
       </div>
-
-      {isLoading && (
-        <div className="absolute inset-0 bg-white/50 dark:bg-gray-900/50 flex items-center justify-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary-600"></div>
-        </div>
-      )}
     </div>
   );
 } 
