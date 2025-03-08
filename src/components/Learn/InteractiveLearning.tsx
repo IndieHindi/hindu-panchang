@@ -94,94 +94,74 @@ const topics = [
 
 export default function InteractiveLearning() {
   const [selectedTopic, setSelectedTopic] = useState(topics[0]);
-  const [activeContentIndex, setActiveContentIndex] = useState(0);
 
   return (
-    <div className="space-y-8">
-      <div>
-        <h1 className="text-3xl font-bold mb-4">Learn Panchang</h1>
-        <p className="text-gray-600 dark:text-gray-400">
-          Explore the fundamental concepts of Hindu Panchang and their significance.
+    <div className="max-w-7xl mx-auto">
+      <motion.div
+        initial={{ opacity: 0, y: -20 }}
+        animate={{ opacity: 1, y: 0 }}
+        className="text-center mb-12"
+      >
+        <h1 className="text-4xl font-bold text-gray-900 dark:text-white mb-4">
+          Learn About Hindu Panchang
+        </h1>
+        <p className="text-xl text-gray-600 dark:text-gray-400">
+          Explore the fundamental concepts and calculations behind the Hindu almanac
         </p>
+      </motion.div>
+
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+        {topics.map((topic, index) => (
+          <motion.div
+            key={topic.id}
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: index * 0.1 }}
+            whileHover={{ scale: 1.02 }}
+            onClick={() => setSelectedTopic(topic)}
+            className={`p-6 rounded-lg cursor-pointer transition-colors ${
+              selectedTopic.id === topic.id
+                ? 'bg-primary-50 dark:bg-primary-900 border-2 border-primary-500'
+                : 'bg-white dark:bg-gray-800 hover:bg-gray-50 dark:hover:bg-gray-700'
+            }`}
+          >
+            <topic.icon className="h-8 w-8 text-primary-600 mb-4" />
+            <h3 className="text-lg font-semibold mb-2">{topic.name}</h3>
+            <p className="text-gray-600 dark:text-gray-400 text-sm">
+              {topic.description}
+            </p>
+          </motion.div>
+        ))}
       </div>
 
-      <Tab.Group>
-        <Tab.List className="flex space-x-4 overflow-x-auto pb-4">
-          {topics.map((topic) => (
-            <Tab
-              key={topic.id}
-              className={({ selected }) => `
-                flex items-center gap-2 px-4 py-2 rounded-lg
-                ${selected
-                  ? 'bg-primary-100 text-primary-700 dark:bg-primary-900 dark:text-primary-100'
-                  : 'text-gray-600 hover:bg-gray-100 dark:text-gray-400 dark:hover:bg-gray-800'
-                }
-              `}
-              onClick={() => {
-                setSelectedTopic(topic);
-                setActiveContentIndex(0);
-              }}
-            >
-              <topic.icon className="h-5 w-5" />
-              <span>{topic.name}</span>
-            </Tab>
-          ))}
-        </Tab.List>
-
-        <Tab.Panels>
-          {topics.map((topic) => (
-            <Tab.Panel
-              key={topic.id}
-              className="space-y-6"
-            >
-              <div className="grid md:grid-cols-2 gap-8">
-                <div className="space-y-6">
-                  <AnimatePresence mode="wait">
-                    <motion.div
-                      key={`${topic.id}-${activeContentIndex}`}
-                      initial={{ opacity: 0, y: 20 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      exit={{ opacity: 0, y: -20 }}
-                      className="card"
-                    >
-                      <h3 className="text-xl font-semibold mb-4">
-                        {topic.content[activeContentIndex].title}
-                      </h3>
-                      <p className="text-gray-600 dark:text-gray-400">
-                        {topic.content[activeContentIndex].text}
-                      </p>
-                    </motion.div>
-                  </AnimatePresence>
-
-                  <div className="flex justify-between">
-                    <button
-                      className="btn btn-secondary"
-                      disabled={activeContentIndex === 0}
-                      onClick={() => setActiveContentIndex(i => i - 1)}
-                    >
-                      Previous
-                    </button>
-                    <button
-                      className="btn btn-primary"
-                      disabled={activeContentIndex === topic.content.length - 1}
-                      onClick={() => setActiveContentIndex(i => i + 1)}
-                    >
-                      Next
-                    </button>
-                  </div>
-                </div>
-
-                <div className="card bg-gray-50 dark:bg-gray-800/50">
-                  {/* TODO: Add interactive visualizations */}
-                  <div className="text-center py-12 text-gray-500">
-                    Interactive visualization coming soon...
-                  </div>
-                </div>
-              </div>
-            </Tab.Panel>
-          ))}
-        </Tab.Panels>
-      </Tab.Group>
+      <AnimatePresence mode="wait">
+        <motion.div
+          key={selectedTopic.id}
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          exit={{ opacity: 0, y: -20 }}
+          className="mt-12 bg-white dark:bg-gray-800 rounded-lg shadow-lg p-8"
+        >
+          <div className="max-w-3xl mx-auto space-y-8">
+            {selectedTopic.content.map((section, index) => (
+              <motion.div
+                key={section.title}
+                initial={{ opacity: 0, x: -20 }}
+                animate={{ opacity: 1, x: 0 }}
+                transition={{ delay: index * 0.1 }}
+                className="space-y-4"
+              >
+                <h3 className="text-xl font-semibold text-gray-900 dark:text-white">
+                  {section.title}
+                </h3>
+                <p className="text-gray-600 dark:text-gray-400 leading-relaxed">
+                  {section.text}
+                </p>
+              </motion.div>
+            ))}
+          </div>
+        </motion.div>
+      </AnimatePresence>
     </div>
   );
 } 

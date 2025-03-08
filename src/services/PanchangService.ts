@@ -432,27 +432,58 @@ class PanchangService {
 
   private async calculateKarana(date: Date): Promise<Karana> {
     try {
-      const timestamp = Math.floor(date.getTime() / 1000);
-      const moonLon = EclipticLongitude(Body.Moon, timestamp);
-      const sunLon = EclipticLongitude(Body.Sun, timestamp);
-      
-      // Karana is half of a tithi
-      const elongation = (moonLon - sunLon + 360) % 360;
-      const karanaNumber = Math.floor(elongation / 6) + 1;
+      // Convert to UTC timestamp
+      const utcDate = new Date(Date.UTC(
+        date.getFullYear(),
+        date.getMonth(),
+        date.getDate(),
+        12, // noon UTC
+        0,
+        0,
+        0
+      ));
+      const timestamp = Math.floor(utcDate.getTime() / 1000);
 
-      return {
-        number: karanaNumber,
-        name: this.getKaranaName(karanaNumber),
-        startTime: new Date(date),
-        endTime: new Date(date.getTime() + 12 * 3600 * 1000),
-      };
+      try {
+        const moonLon = EclipticLongitude(Body.Moon, timestamp);
+        const sunLon = EclipticLongitude(Body.Sun, timestamp);
+        
+        // Karana is half of a tithi
+        const elongation = (moonLon - sunLon + 360) % 360;
+        const karanaNumber = Math.floor(elongation / 6) + 1;
+
+        // Calculate start and end times
+        const startTime = new Date(utcDate);
+        const endTime = new Date(utcDate);
+        endTime.setHours(endTime.getHours() + 12); // Karana lasts approximately 12 hours
+
+        return {
+          number: karanaNumber,
+          name: this.getKaranaName(karanaNumber),
+          startTime,
+          endTime,
+        };
+      } catch (error) {
+        console.warn('Error in Karana astronomical calculations:', error);
+        // Fallback to default values
+        const startTime = new Date(utcDate);
+        const endTime = new Date(utcDate);
+        endTime.setHours(endTime.getHours() + 12);
+        
+        return {
+          number: 1,
+          name: this.getKaranaName(1),
+          startTime,
+          endTime,
+        };
+      }
     } catch (error) {
-      console.warn('Error in karana calculation:', error);
+      console.error('Error in Karana calculation:', error);
       return {
         number: 1,
         name: this.getKaranaName(1),
         startTime: new Date(date),
-        endTime: new Date(date.getTime() + 12 * 3600 * 1000)
+        endTime: new Date(date.getTime() + 12 * 3600 * 1000),
       };
     }
   }

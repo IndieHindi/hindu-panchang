@@ -163,27 +163,37 @@ export default function DailyPanchang() {
           <CalendarIcon className="h-8 w-8 text-primary-600" />
           Daily Panchang
         </motion.h1>
-        <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4">
-          <div className="relative">
-            <CalendarIcon className="h-5 w-5 absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
-            <input
-              type="date"
-              value={formatDate(selectedDate, 'yyyy-MM-dd')}
-              onChange={handleDateChange}
-              className="pl-10 rounded-md border-gray-300 shadow-sm focus:border-primary-500 focus:ring-primary-500"
-            />
+        <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4 bg-white dark:bg-gray-800 p-4 rounded-lg shadow-md">
+          <div className="relative w-full sm:w-auto">
+            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+              Date
+            </label>
+            <div className="relative">
+              <CalendarIcon className="h-5 w-5 absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
+              <input
+                type="date"
+                value={formatDate(selectedDate, 'yyyy-MM-dd')}
+                onChange={handleDateChange}
+                className="pl-10 w-full sm:w-auto rounded-md border-gray-300 shadow-sm focus:border-primary-500 focus:ring-primary-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white"
+              />
+            </div>
           </div>
-          <div className="relative">
-            <MapPinIcon className="h-5 w-5 absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
-            <select
-              value={location.name}
-              onChange={handleLocationChange}
-              className="pl-10 rounded-md border-gray-300 shadow-sm focus:border-primary-500 focus:ring-primary-500"
-            >
-              {locations.map(loc => (
-                <option key={loc.name} value={loc.name}>{loc.name}</option>
-              ))}
-            </select>
+          <div className="relative w-full sm:w-auto">
+            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+              Location
+            </label>
+            <div className="relative">
+              <MapPinIcon className="h-5 w-5 absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
+              <select
+                value={location.name}
+                onChange={handleLocationChange}
+                className="pl-10 w-full sm:w-auto rounded-md border-gray-300 shadow-sm focus:border-primary-500 focus:ring-primary-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white"
+              >
+                {locations.map(loc => (
+                  <option key={loc.name} value={loc.name}>{loc.name}</option>
+                ))}
+              </select>
+            </div>
           </div>
         </div>
       </div>
