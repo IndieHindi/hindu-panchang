@@ -8,6 +8,8 @@ import Rashifal from './pages/Rashifal';
 import FestivalCalendar from './components/Festivals/FestivalCalendar';
 import InteractiveLearning from './components/Learn/InteractiveLearning';
 import Visualization from './pages/Visualization';
+import Layout from './components/Layout';
+import Learn from './pages/Learn';
 
 // Default location (New Delhi)
 const defaultLocation = {
@@ -32,56 +34,40 @@ const queryClient = new QueryClient({
 function App() {
   return (
     <QueryClientProvider client={queryClient}>
-      <Router>
-        <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
-          <header className="bg-white dark:bg-gray-800 shadow">
-            <nav className="container mx-auto px-4 py-4">
-              <Navigation />
-            </nav>
-          </header>
-
-          <main className="container mx-auto px-4 py-8">
-            <Routes>
-              <Route path="/" element={<DailyPanchang />} />
-              <Route path="/daily" element={<DailyPanchang />} />
-              <Route 
-                path="/calendar" 
-                element={<MonthlyCalendar location={defaultLocation} />} 
-              />
-              <Route path="/rashifal" element={<Rashifal />} />
-              <Route 
-                path="/festivals" 
-                element={<FestivalCalendar onNotificationToggle={festival => {
-                  if (Notification.permission === 'granted') {
-                    new Notification(`Festival Notification: ${festival.name}`, {
-                      body: `${festival.description}\nDate: ${festival.date.toLocaleDateString()}`,
-                      icon: '/om.svg'
-                    });
-                  } else if (Notification.permission !== 'denied') {
-                    Notification.requestPermission().then(permission => {
-                      if (permission === 'granted') {
-                        new Notification(`Festival Notification: ${festival.name}`, {
-                          body: `${festival.description}\nDate: ${festival.date.toLocaleDateString()}`,
-                          icon: '/om.svg'
-                        });
-                      }
-                    });
-                  }
-                }} />} 
-              />
-              <Route path="/learn" element={<InteractiveLearning />} />
-              <Route path="/visualization" element={<Visualization />} />
-            </Routes>
-          </main>
-
-          <footer className="bg-gray-100 dark:bg-gray-800 mt-auto">
-            <div className="container mx-auto px-4 py-8">
-              <p className="text-center text-gray-600 dark:text-gray-400">
-                © {new Date().getFullYear()} Hindu Panchang Calendar
-              </p>
-            </div>
-          </footer>
-        </div>
+      <Router basename="/hindu-panchang">
+        <Layout>
+          <Routes>
+            <Route path="/" element={<DailyPanchang />} />
+            <Route path="/daily" element={<DailyPanchang />} />
+            <Route 
+              path="/calendar" 
+              element={<MonthlyCalendar location={defaultLocation} />} 
+            />
+            <Route path="/rashifal" element={<Rashifal />} />
+            <Route 
+              path="/festivals" 
+              element={<FestivalCalendar onNotificationToggle={festival => {
+                if (Notification.permission === 'granted') {
+                  new Notification(`Festival Notification: ${festival.name}`, {
+                    body: `${festival.description}\nDate: ${festival.date.toLocaleDateString()}`,
+                    icon: '/om.svg'
+                  });
+                } else if (Notification.permission !== 'denied') {
+                  Notification.requestPermission().then(permission => {
+                    if (permission === 'granted') {
+                      new Notification(`Festival Notification: ${festival.name}`, {
+                        body: `${festival.description}\nDate: ${festival.date.toLocaleDateString()}`,
+                        icon: '/om.svg'
+                      });
+                    }
+                  });
+                }
+              }} />} 
+            />
+            <Route path="/learn" element={<Learn />} />
+            <Route path="/visualization" element={<Visualization />} />
+          </Routes>
+        </Layout>
       </Router>
     </QueryClientProvider>
   );
