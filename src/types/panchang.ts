@@ -82,4 +82,47 @@ export interface RashifalPrediction {
   compatibility: string[];
   luckyColor: string;
   luckyNumber: number;
+}
+
+export interface BirthDetails {
+  dateTime: Date;
+  location: Location;
+  name?: string;
+}
+
+export interface ExtendedRashifalPrediction {
+  rashi: string;
+  timeframe: 'daily' | 'weekly' | 'monthly' | 'yearly';
+  prediction: {
+    general: string;
+    career: string;
+    love: string;
+    health: string;
+    luck: string;
+    finance: string;
+    family: string;
+    education: string;
+  };
+  compatibility: {
+    bestMatches: string[];
+    goodMatches: string[];
+    avoidMatches: string[];
+  };
+  luckyElements: {
+    colors: string[];
+    numbers: number[];
+    days: string[];
+    gemstones: string[];
+    direction: string;
+  };
+  planetaryInfluence: {
+    ruling: string;
+    favorable: string[];
+    unfavorable: string[];
+  };
+  characteristics: {
+    personality: string[];
+    strengths: string[];
+    weaknesses: string[];
+  };
 } 

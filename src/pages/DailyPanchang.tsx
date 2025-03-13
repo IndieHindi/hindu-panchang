@@ -124,12 +124,10 @@ export default function DailyPanchang() {
   if (isLoading) {
     return (
       <div className="flex items-center justify-center min-h-[50vh]">
-        <motion.div
-          animate={{ rotate: 360 }}
-          transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
-          className="rounded-full h-12 w-12 border-b-2 border-primary-600"
-        />
-        <span className="ml-3 text-gray-600 dark:text-gray-400">Loading Panchang data...</span>
+        <div className="rounded-full h-12 w-12 border-b-2 border-primary-600" />
+        <span className="ml-3 text-gray-600 dark:text-gray-400" role="status">
+          Loading Panchang data...
+        </span>
       </div>
     );
   }
@@ -165,12 +163,13 @@ export default function DailyPanchang() {
         </motion.h1>
         <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4 bg-white dark:bg-gray-800 p-4 rounded-lg shadow-md">
           <div className="relative w-full sm:w-auto">
-            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+            <label htmlFor="date" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
               Date
             </label>
             <div className="relative">
               <CalendarIcon className="h-5 w-5 absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
               <input
+                id="date"
                 type="date"
                 value={formatDate(selectedDate, 'yyyy-MM-dd')}
                 onChange={handleDateChange}

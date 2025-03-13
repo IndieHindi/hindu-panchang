@@ -43,7 +43,7 @@ export default function Navigation() {
       </nav>
 
       {/* Mobile navigation */}
-      <nav className="lg:hidden">
+      <nav className="lg:hidden" aria-label="mobile navigation">
         <div className="flex items-center justify-between">
           <Link to="/" className="text-xl font-bold text-[#ff6b6b] pixel-text animate-pulse-slow">
             Hindu Panchang

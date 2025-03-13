@@ -1,39 +1,31 @@
-# Hindu Panchang Calendar
+# Hindu Panchang
 
-A modern web application for calculating and displaying Hindu Panchang (almanac) information. Built with React, TypeScript, and Tailwind CSS.
+A modern web application for calculating and displaying Hindu Panchang (astrological calendar) information, including daily panchang, rashifal (horoscope), and celestial visualizations.
 
 ## Features
 
-- Daily Panchang calculations
-  - Tithi (Lunar Day)
-  - Nakshatra (Lunar Mansion)
-  - Yoga
-  - Karana
-  - Astronomical information (sunrise, sunset, moonrise, moonset)
-- Monthly calendar view
-- Rashifal (Zodiac) predictions
-- Festival calendar
-- Interactive learning section
-- Mobile-responsive design
-- Dark mode support
+- **Daily Panchang**: View detailed information about tithi, nakshatra, yoga, and karana for any date
+- **Rashifal**: Get personalized astrological predictions based on birth details
+- **Celestial Visualization**: Interactive 3D visualization of planetary positions and zodiac signs
+- **Festival Calendar**: Track important Hindu festivals and their dates
+- **Learning Resources**: Educational content about Hindu astrology and panchang
+- **Responsive Design**: Works seamlessly on desktop and mobile devices
 
 ## Tech Stack
 
-- React 18
-- TypeScript
-- Tailwind CSS
-- React Router
-- React Query
-- Astronomy Engine
-- Jest & React Testing Library
-- Vite
+- React + TypeScript
+- Three.js for 3D visualizations
+- Tailwind CSS for styling
+- React Query for data fetching
+- Vitest for testing
+- GitHub Pages for deployment
 
 ## Getting Started
 
 ### Prerequisites
 
-- Node.js 18+
-- npm 9+
+- Node.js (v14 or higher)
+- npm or yarn
 
 ### Installation
 
@@ -53,40 +45,36 @@ A modern web application for calculating and displaying Hindu Panchang (almanac)
    npm run dev
    ```
 
-4. Open [http://localhost:5173](http://localhost:5173) in your browser.
+4. Build for production:
+   ```bash
+   npm run build
+   ```
 
 ### Running Tests
 
 ```bash
-npm test
-```
-
-To run tests with coverage:
-```bash
-npm test -- --coverage
+npm run test
+npm run test:coverage
 ```
 
 ## Project Structure
 
 ```
 src/
-  ├── components/     # Reusable UI components
-  ├── pages/         # Main application pages
-  ├── services/      # API and data handling
-  ├── utils/         # Helper functions
-  ├── hooks/         # Custom React hooks
-  ├── assets/        # Images and static files
-  ├── animations/    # SVG and animation files
-  ├── contexts/      # React contexts
-  └── types/         # TypeScript type definitions
+├── components/         # Reusable UI components
+├── pages/             # Page components
+├── services/          # API and business logic services
+├── utils/             # Utility functions
+├── types/             # TypeScript type definitions
+└── test/              # Test setup and configuration
 ```
 
 ## Contributing
 
 1. Fork the repository
-2. Create your feature branch (`git checkout -b feature/AmazingFeature`)
-3. Commit your changes (`git commit -m 'Add some AmazingFeature'`)
-4. Push to the branch (`git push origin feature/AmazingFeature`)
+2. Create your feature branch (`git checkout -b feature/amazing-feature`)
+3. Commit your changes (`git commit -m 'Add some amazing feature'`)
+4. Push to the branch (`git push origin feature/amazing-feature`)
 5. Open a Pull Request
 
 ## License
@@ -95,8 +83,13 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 ## Acknowledgments
 
-- [Astronomy Engine](https://github.com/cosinekitty/astronomy) for astronomical calculations
-- [React](https://reactjs.org/)
-- [Tailwind CSS](https://tailwindcss.com/)
-- [React Query](https://tanstack.com/query/latest)
-- [React Router](https://reactrouter.com/) 
+- [Three.js](https://threejs.org/) for 3D graphics
+- [Tailwind CSS](https://tailwindcss.com/) for styling
+- [React Query](https://tanstack.com/query/latest) for data management
+- [Vitest](https://vitest.dev/) for testing
+
+## Contact
+
+Your Name - [@yourtwitter](https://twitter.com/yourtwitter) - email@example.com
+
+Project Link: [https://github.com/yourusername/hindu-panchang](https://github.com/yourusername/hindu-panchang) 
