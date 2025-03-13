@@ -46,18 +46,24 @@ describe('Rashifal', () => {
     expect(screen.getByText('Birth Chart')).toBeInTheDocument();
   });
 
-  // Update this test to match the actual component behavior
-  // We're commenting out the detailed assertion test since we would need to mock the component behavior
-  /*
-  it('shows prediction when a zodiac sign is selected', async () => {
+  it('shows prediction when a zodiac sign is selected', () => {
     renderWithQueryClient();
 
     // Click on a zodiac sign
-    fireEvent.click(screen.getByText('Aries'));
+    const ariesSign = screen.getByText('Aries');
+    fireEvent.click(ariesSign);
 
-    // Wait for prediction to load
-    // These assertions would need to be updated based on the actual component behavior
-    // and would likely require mocking API responses or state changes
+    // Verify prediction navigation options are displayed
+    expect(screen.getByText('General')).toBeInTheDocument();
+    expect(screen.getByText('Career')).toBeInTheDocument();
+    expect(screen.getByText('Love')).toBeInTheDocument();
+    expect(screen.getByText('Health')).toBeInTheDocument();
+
+    // Verify element information is displayed
+    expect(screen.getByText('fire element')).toBeInTheDocument();
+
+    // We can't test for exact prediction text since it uses a seeded random function
+    // Instead, we can test for the prediction container being present
+    expect(screen.getByText('Characteristics')).toBeInTheDocument();
   });
-  */
 }); 
