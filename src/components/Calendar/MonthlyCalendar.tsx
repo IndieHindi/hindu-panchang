@@ -3,7 +3,6 @@ import { format, startOfMonth, endOfMonth, eachDayOfInterval, isSameMonth, isTod
 import { useQuery } from '@tanstack/react-query';
 import PanchangService from '../../services/PanchangService';
 import { DailyPanchang, Location } from '../../types/panchang';
-import { MoonIcon } from '@heroicons/react/24/outline';
 
 interface MonthlyCalendarProps {
   location: Location;

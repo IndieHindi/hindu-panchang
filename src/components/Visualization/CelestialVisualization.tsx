@@ -110,11 +110,14 @@ const CelestialVisualization: React.FC<Props> = ({ selectedSigns = [], planetary
 
     window.addEventListener('resize', handleResize);
 
+    // Store ref value to avoid stale closure in cleanup
+    const currentContainer = containerRef.current;
+
     // Cleanup function to prevent memory leaks
     return () => {
       window.removeEventListener('resize', handleResize);
-      if (containerRef.current && renderer && renderer.domElement) {
-        containerRef.current.removeChild(renderer.domElement);
+      if (currentContainer && renderer && renderer.domElement) {
+        currentContainer.removeChild(renderer.domElement);
       }
       
       // Remove all objects from the scene instead of using scene.clear()

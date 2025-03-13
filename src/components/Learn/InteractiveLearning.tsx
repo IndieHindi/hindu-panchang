@@ -1,8 +1,6 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Tab } from '@headlessui/react';
 import {
-  BookOpenIcon,
   MoonIcon,
   SunIcon,
   StarIcon,

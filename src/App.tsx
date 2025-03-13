@@ -1,12 +1,10 @@
 import React from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import Navigation from './components/Navigation';
 import DailyPanchang from './pages/DailyPanchang';
 import MonthlyCalendar from './components/Calendar/MonthlyCalendar';
 import Rashifal from './pages/Rashifal';
 import FestivalCalendar from './components/Festivals/FestivalCalendar';
-import InteractiveLearning from './components/Learn/InteractiveLearning';
 import Visualization from './pages/Visualization';
 import Layout from './components/Layout';
 import Learn from './pages/Learn';

@@ -18,7 +18,7 @@ interface RashifalParams {
   timeframe?: 'daily' | 'weekly' | 'monthly' | 'yearly';
 }
 
-export const getRashifal = async (params: RashifalParams): Promise<RashifalData> => {
+export const getRashifal = async (_params: RashifalParams): Promise<RashifalData> => {
   // TODO: Implement actual API call
   // For now, return mock data
   return {

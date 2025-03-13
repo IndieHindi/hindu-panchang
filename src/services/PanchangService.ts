@@ -1,15 +1,9 @@
 import {
   Observer,
-  Equator,
-  Spherical,
   SearchRiseSet,
-  SearchMoonPhase,
   MoonPhase,
   Body,
-  Ecliptic,
-  GeoVector,
   EclipticLongitude,
-  MakeTime,
 } from 'astronomy-engine';
 import {
   DailyPanchang,
@@ -167,7 +161,7 @@ class PanchangService {
       }
 
       // Add festivals for the date
-      const festivals = this.getFestivals(utcDate, tithi, nakshatra);
+      const festivals = this.getFestivals(utcDate, tithi);
 
       // Calculate muhurtas using the astronomical info
       const muhurtas = this.calculateMuhurtas(astronomicalInfo.sunrise, astronomicalInfo.sunset);
@@ -517,7 +511,7 @@ class PanchangService {
     return karanaNames[(karanaNumber - 1) % 8];
   }
 
-  private getFestivals(date: Date, tithi: Tithi, nakshatra: Nakshatra): Festival[] {
+  private getFestivals(date: Date, tithi: Tithi): Festival[] {
     const festivals: Festival[] = [];
     const month = date.getMonth() + 1; // 1-12
     const day = date.getDate();
