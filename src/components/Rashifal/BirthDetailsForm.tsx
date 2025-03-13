@@ -71,7 +71,7 @@ const BirthDetailsForm: React.FC<BirthDetailsFormProps> = ({ onSubmit, isLoading
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
     
-    let updatedValue: any = value;
+    let updatedValue: string | number | Date = value;
     
     // Handle date conversion
     if (name === 'date') {

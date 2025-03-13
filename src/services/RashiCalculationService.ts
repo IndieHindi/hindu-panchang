@@ -311,7 +311,7 @@ export class RashiCalculationService {
     const longFactor = Math.abs(Math.floor(longitude)) % 12;
     
     // Combine factors for a consistent but varied result
-    let index = (hour + dayOfYear + latFactor + longFactor) % 12;
+    const index = (hour + dayOfYear + latFactor + longFactor) % 12;
     
     return rashis[index];
   }

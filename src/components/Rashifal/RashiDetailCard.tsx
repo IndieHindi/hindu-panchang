@@ -1,6 +1,5 @@
 import React, { useMemo } from 'react';
 import { motion } from 'framer-motion';
-import { RashiResult } from '../../services/RashiCalculationService';
 
 /**
  * Type definitions for zodiac signs with their properties

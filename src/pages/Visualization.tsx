@@ -3,7 +3,6 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { RocketLaunchIcon, SparklesIcon, ClockIcon, StarIcon } from '@heroicons/react/24/outline';
 import InteractiveTimeline from '../components/Visualization/InteractiveTimeline';
 import PixelArtRashiVisualizer from '../components/Rashifal/PixelArtRashiVisualizer';
-import CelestialVisualization from '../components/Visualization/CelestialVisualization';
 
 const tabs = [
   {

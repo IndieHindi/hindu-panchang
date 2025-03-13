@@ -1,10 +1,11 @@
 import React, { useState, useCallback, useMemo } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import BirthDetailsForm, { BirthDetails } from '../components/Rashifal/BirthDetailsForm';
+import BirthDetailsForm from '../components/Rashifal/BirthDetailsForm';
 import PixelArtRashiVisualizer from '../components/Rashifal/PixelArtRashiVisualizer';
 import RashiDetailCard from '../components/Rashifal/RashiDetailCard';
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 import ZodiacSign from '../components/Rashifal/ZodiacSign';
-import RashiCalculationService, { RashiResult } from '../services/RashiCalculationService';
+import rashiCalculationService, { RashiResult, BirthDetails } from '../services/RashiCalculationService';
 
 /**
  * Rashifal Page
@@ -39,12 +40,12 @@ const Rashifal: React.FC = () => {
   ], []);
 
   // State variables
-  const [selectedSign, setSelectedSign] = useState<string | null>(null);
+  const [selectedSign, setSelectedSign] = useState<string>('');
   const [activeTab, setActiveTab] = useState<'quick' | 'detailed'>('quick');
   const [activePrediction, setActivePrediction] = useState<'general' | 'career' | 'love' | 'health'>('general');
-  const [isLoading, setIsLoading] = useState<boolean>(false);
-  const [showRashiResult, setShowRashiResult] = useState<boolean>(false);
-  const [rashiResult, setRashiResult] = useState<any>(null);
+  const [isLoading, setIsLoading] = useState(false);
+  const [showRashiResult, setShowRashiResult] = useState(false);
+  const [rashiResult, setRashiResult] = useState<RashiResult | null>(null);
 
   // Generate seeded random numbers for consistent "predictions"
   const seedRandom = useCallback((seed: string) => {
@@ -128,13 +129,12 @@ const Rashifal: React.FC = () => {
   }, []);
 
   // Handle birth details submission
-  const handleBirthDetailsSubmit = useCallback(async (details: any) => {
+  const handleBirthDetailsSubmit = useCallback(async (details: BirthDetails) => {
     try {
       setIsLoading(true);
       
       // Calculate rashi using the service
-      const calculationService = RashiCalculationService.getInstance();
-      const result = await calculationService.calculateRashi(details);
+      const result = await rashiCalculationService.calculateRashi(details);
       
       setRashiResult(result);
       setShowRashiResult(true);
@@ -514,22 +514,26 @@ const Rashifal: React.FC = () => {
                   </div>
                   
                   <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-                    <PixelArtRashiVisualizer
-                      userRashi={rashiResult.mainRashi}
-                      planetPositions={rashiResult.planetaryPositions || rashiResult.planetPositions}
-                    />
-                    
-                    <RashiDetailCard 
-                      details={{
-                        mainRashi: rashiResult.mainRashi,
-                        moonRashi: rashiResult.moonRashi,
-                        ascendant: rashiResult.ascendantRashi,
-                        characteristics: rashiResult.characteristics,
-                        compatibility: rashiResult.compatibility,
-                        luckyColors: rashiResult.luckyColors,
-                        luckyNumbers: rashiResult.luckyNumbers
-                      }}
-                    />
+                    {rashiResult && (
+                      <>
+                        <PixelArtRashiVisualizer
+                          userRashi={rashiResult.mainRashi}
+                          planetPositions={rashiResult.planetPositions}
+                        />
+                        
+                        <RashiDetailCard 
+                          details={{
+                            mainRashi: rashiResult.mainRashi,
+                            moonRashi: rashiResult.moonRashi,
+                            ascendant: rashiResult.ascendantRashi,
+                            characteristics: rashiResult.characteristics,
+                            compatibility: rashiResult.compatibility,
+                            luckyColors: rashiResult.luckyColors,
+                            luckyNumbers: rashiResult.luckyNumbers
+                          }}
+                        />
+                      </>
+                    )}
                   </div>
                 </motion.div>
               )}

@@ -67,6 +67,7 @@ interface PixelArtRashiVisualizerProps {
  * @TODO: Add option to export the visualization as an image
  */
 const PixelArtRashiVisualizer: React.FC<PixelArtRashiVisualizerProps> = ({
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   birthDetails,
   planetPositions = [],
   userRashi
@@ -102,96 +103,6 @@ const PixelArtRashiVisualizer: React.FC<PixelArtRashiVisualizerProps> = ({
     return planetPositions.filter(p => p.rashi === selectedRashi)
       .map(p => p.planet);
   }, [selectedRashi, planetPositions]);
-
-  // Draw pixelated starry background
-  const drawPixelatedBackground = useCallback((ctx: CanvasRenderingContext2D) => {
-    // Dark blue background
-    ctx.fillStyle = '#000033';
-    ctx.fillRect(0, 0, CANVAS_SIZE, CANVAS_SIZE);
-    
-    // Draw stars with consistent pattern but twinkling based on animation frame
-    ctx.fillStyle = '#FFFFFF';
-    const starSeed = 12345;
-    
-    for (let i = 0; i < 50; i++) {
-      const x = Math.floor(seededRandom(starSeed, i) * CANVAS_SIZE / PIXEL_SIZE) * PIXEL_SIZE;
-      const y = Math.floor(seededRandom(starSeed, i+100) * CANVAS_SIZE / PIXEL_SIZE) * PIXEL_SIZE;
-      
-      // Make some stars twinkle based on animation frame
-      if (i % 8 === animationFrame % 8) {
-        ctx.fillRect(x, y, PIXEL_SIZE, PIXEL_SIZE);
-      } else if (seededRandom(starSeed, i) > 0.7) {
-        ctx.fillRect(x, y, PIXEL_SIZE, PIXEL_SIZE);
-      }
-    }
-  }, [animationFrame, CANVAS_SIZE, PIXEL_SIZE]);
-
-  // Draw the zodiac wheel in pixel art style
-  const drawZodiacWheel = useCallback((ctx: CanvasRenderingContext2D) => {
-    const centerX = CANVAS_SIZE / 2;
-    const centerY = CANVAS_SIZE / 2;
-    const radius = (CANVAS_SIZE / 2) - PIXEL_SIZE * 4;
-    
-    // Draw wheel outline
-    ctx.strokeStyle = '#FFD700';  // Golden outline
-    ctx.lineWidth = PIXEL_SIZE;
-    ctx.beginPath();
-    ctx.arc(centerX, centerY, radius, 0, Math.PI * 2);
-    ctx.stroke();
-    
-    // Draw zodiac houses (rashis) in pixel art style
-    RASHIS.forEach((rashi, index) => {
-      const angle = (index * 30 - 90) * (Math.PI / 180);
-      const x = centerX + radius * 0.75 * Math.cos(angle);
-      const y = centerY + radius * 0.75 * Math.sin(angle);
-      
-      // Determine if this rashi should be highlighted
-      const isHighlighted = rashi.name === hoveredRashi || rashi.name === selectedRashi;
-      const cellSize = PIXEL_SIZE * 3;
-      const colorBrightness = isHighlighted ? 1 : 0.7;
-      
-      // Draw pixel art symbol
-      drawPixelSymbol(ctx, x, y, rashi, index, colorBrightness);
-      
-      // Add animation effect for highlighted rashi
-      if (isHighlighted && animationFrame % 2 === 0) {
-        ctx.strokeStyle = rashi.color;
-        ctx.lineWidth = PIXEL_SIZE / 2;
-        ctx.strokeRect(
-          x - cellSize, 
-          y - cellSize, 
-          cellSize * 2, 
-          cellSize * 2
-        );
-      }
-    });
-  }, [animationFrame, hoveredRashi, selectedRashi, CANVAS_SIZE, PIXEL_SIZE]);
-
-  // Draw planet positions
-  const drawPlanets = useCallback((ctx: CanvasRenderingContext2D) => {
-    const centerX = CANVAS_SIZE / 2;
-    const centerY = CANVAS_SIZE / 2;
-    const radius = (CANVAS_SIZE / 2) - PIXEL_SIZE * 8;
-    
-    planetPositions.forEach((position) => {
-      // Find the planet and rashi
-      const planet = PLANETS.find(p => p.name === position.planet);
-      const rashiIndex = RASHIS.findIndex(r => r.name === position.rashi);
-      
-      if (planet && rashiIndex >= 0) {
-        // Calculate position in the wheel
-        const baseAngle = rashiIndex * 30;
-        const degreeAngle = position.degree;
-        const totalAngle = (baseAngle + degreeAngle - 90) * (Math.PI / 180);
-        
-        const x = centerX + radius * Math.cos(totalAngle);
-        const y = centerY + radius * Math.sin(totalAngle);
-        
-        // Draw pixel art planet
-        drawPixelPlanet(ctx, x, y, planet, animationFrame);
-      }
-    });
-  }, [planetPositions, animationFrame, CANVAS_SIZE, PIXEL_SIZE]);
 
   // Draw a pixel art symbol for a rashi
   const drawPixelSymbol = useCallback((
@@ -331,13 +242,14 @@ const PixelArtRashiVisualizer: React.FC<PixelArtRashiVisualizerProps> = ({
           ctx.fillRect(x + pulseSize/2, y + pulseSize/2, PIXEL_SIZE/2, PIXEL_SIZE/2);
         }
         break;
-      case 'Moon':
+      case 'Moon': {
         // Crescent moon
         ctx.fillRect(x - pulseSize/2, y - pulseSize/2, pulseSize, pulseSize);
         ctx.fillStyle = '#000033'; // Background color
         const offsetX = (frame % 2) * (PIXEL_SIZE/4);
         ctx.fillRect(x - pulseSize/2 + offsetX, y - pulseSize/2, pulseSize/2, pulseSize);
         break;
+      }
       default:
         // Default circular planet
         ctx.fillRect(x - pulseSize/2, y - pulseSize/2, pulseSize, pulseSize);
@@ -350,7 +262,97 @@ const PixelArtRashiVisualizer: React.FC<PixelArtRashiVisualizerProps> = ({
     ctx.textBaseline = 'middle';
     ctx.fillText(planet.symbol, x, y);
   }, [PIXEL_SIZE]);
-  
+
+  // Draw pixelated starry background
+  const drawPixelatedBackground = useCallback((ctx: CanvasRenderingContext2D) => {
+    // Dark blue background
+    ctx.fillStyle = '#000033';
+    ctx.fillRect(0, 0, CANVAS_SIZE, CANVAS_SIZE);
+    
+    // Draw stars with consistent pattern but twinkling based on animation frame
+    ctx.fillStyle = '#FFFFFF';
+    const starSeed = 12345;
+    
+    for (let i = 0; i < 50; i++) {
+      const x = Math.floor(seededRandom(starSeed, i) * CANVAS_SIZE / PIXEL_SIZE) * PIXEL_SIZE;
+      const y = Math.floor(seededRandom(starSeed, i+100) * CANVAS_SIZE / PIXEL_SIZE) * PIXEL_SIZE;
+      
+      // Make some stars twinkle based on animation frame
+      if (i % 8 === animationFrame % 8) {
+        ctx.fillRect(x, y, PIXEL_SIZE, PIXEL_SIZE);
+      } else if (seededRandom(starSeed, i) > 0.7) {
+        ctx.fillRect(x, y, PIXEL_SIZE, PIXEL_SIZE);
+      }
+    }
+  }, [animationFrame, CANVAS_SIZE, PIXEL_SIZE]);
+
+  // Draw the zodiac wheel in pixel art style
+  const drawZodiacWheel = useCallback((ctx: CanvasRenderingContext2D) => {
+    const centerX = CANVAS_SIZE / 2;
+    const centerY = CANVAS_SIZE / 2;
+    const radius = (CANVAS_SIZE / 2) - PIXEL_SIZE * 4;
+    
+    // Draw wheel outline
+    ctx.strokeStyle = '#FFD700';  // Golden outline
+    ctx.lineWidth = PIXEL_SIZE;
+    ctx.beginPath();
+    ctx.arc(centerX, centerY, radius, 0, Math.PI * 2);
+    ctx.stroke();
+    
+    // Draw zodiac houses (rashis) in pixel art style
+    RASHIS.forEach((rashi, index) => {
+      const angle = (index * 30 - 90) * (Math.PI / 180);
+      const x = centerX + radius * 0.75 * Math.cos(angle);
+      const y = centerY + radius * 0.75 * Math.sin(angle);
+      
+      // Determine if this rashi should be highlighted
+      const isHighlighted = rashi.name === hoveredRashi || rashi.name === selectedRashi;
+      const cellSize = PIXEL_SIZE * 3;
+      const colorBrightness = isHighlighted ? 1 : 0.7;
+      
+      // Draw pixel art symbol
+      drawPixelSymbol(ctx, x, y, rashi, index, colorBrightness);
+      
+      // Add animation effect for highlighted rashi
+      if (isHighlighted && animationFrame % 2 === 0) {
+        ctx.strokeStyle = rashi.color;
+        ctx.lineWidth = PIXEL_SIZE / 2;
+        ctx.strokeRect(
+          x - cellSize, 
+          y - cellSize, 
+          cellSize * 2, 
+          cellSize * 2
+        );
+      }
+    });
+  }, [animationFrame, hoveredRashi, selectedRashi, CANVAS_SIZE, PIXEL_SIZE, drawPixelSymbol]);
+
+  // Draw planet positions
+  const drawPlanets = useCallback((ctx: CanvasRenderingContext2D) => {
+    const centerX = CANVAS_SIZE / 2;
+    const centerY = CANVAS_SIZE / 2;
+    const radius = (CANVAS_SIZE / 2) - PIXEL_SIZE * 8;
+    
+    planetPositions.forEach((position) => {
+      // Find the planet and rashi
+      const planet = PLANETS.find(p => p.name === position.planet);
+      const rashiIndex = RASHIS.findIndex(r => r.name === position.rashi);
+      
+      if (planet && rashiIndex >= 0) {
+        // Calculate position in the wheel
+        const baseAngle = rashiIndex * 30;
+        const degreeAngle = position.degree;
+        const totalAngle = (baseAngle + degreeAngle - 90) * (Math.PI / 180);
+        
+        const x = centerX + radius * Math.cos(totalAngle);
+        const y = centerY + radius * Math.sin(totalAngle);
+        
+        // Draw pixel art planet
+        drawPixelPlanet(ctx, x, y, planet, animationFrame);
+      }
+    });
+  }, [planetPositions, animationFrame, CANVAS_SIZE, PIXEL_SIZE, drawPixelPlanet]);
+
   // Highlight a specific rashi sector
   const highlightRashi = useCallback((ctx: CanvasRenderingContext2D, rashiName: string) => {
     const rashiIndex = RASHIS.findIndex(r => r.name === rashiName);
