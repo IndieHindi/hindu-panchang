@@ -20,7 +20,7 @@ export default function Navigation() {
       {/* Desktop navigation */}
       <nav className="hidden lg:flex items-center justify-between">
         <div className="flex items-center space-x-8">
-          <Link to="/" className="text-2xl font-bold text-primary-600">
+          <Link to="/" className="text-2xl font-bold text-[#ff6b6b] pixel-text animate-pulse-slow">
             Hindu Panchang
           </Link>
           <div className="flex space-x-4">
@@ -28,11 +28,11 @@ export default function Navigation() {
               <Link
                 key={item.name}
                 to={item.href}
-                className={`px-3 py-2 rounded-md text-sm font-medium transition-colors duration-200
+                className={`px-3 py-2 text-sm font-medium pixel-border pixel-border-hover
                   ${
                     location.pathname === item.href
-                      ? 'bg-primary-100 text-primary-700 dark:bg-primary-900 dark:text-primary-100'
-                      : 'text-gray-700 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-700'
+                      ? 'bg-[#ff6b6b] text-white'
+                      : 'text-[#e0e0e0] hover:bg-[#3a3a3a]'
                   }`}
               >
                 {item.name}
@@ -45,12 +45,12 @@ export default function Navigation() {
       {/* Mobile navigation */}
       <nav className="lg:hidden">
         <div className="flex items-center justify-between">
-          <Link to="/" className="text-xl font-bold text-primary-600">
+          <Link to="/" className="text-xl font-bold text-[#ff6b6b] pixel-text animate-pulse-slow">
             Hindu Panchang
           </Link>
           <button
             type="button"
-            className="p-2 rounded-md text-gray-700 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-700"
+            className="p-2 pixel-border pixel-border-hover text-[#e0e0e0] hover:bg-[#3a3a3a]"
             onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
           >
             <span className="sr-only">Open main menu</span>
@@ -69,11 +69,11 @@ export default function Navigation() {
               <Link
                 key={item.name}
                 to={item.href}
-                className={`block px-3 py-2 rounded-md text-base font-medium transition-colors duration-200
+                className={`block px-3 py-2 text-base font-medium pixel-border pixel-border-hover
                   ${
                     location.pathname === item.href
-                      ? 'bg-primary-100 text-primary-700 dark:bg-primary-900 dark:text-primary-100'
-                      : 'text-gray-700 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-700'
+                      ? 'bg-[#ff6b6b] text-white'
+                      : 'text-[#e0e0e0] hover:bg-[#3a3a3a]'
                   }`}
                 onClick={() => setMobileMenuOpen(false)}
               >

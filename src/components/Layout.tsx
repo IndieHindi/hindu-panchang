@@ -7,20 +7,22 @@ interface LayoutProps {
 
 export default function Layout({ children }: LayoutProps) {
   return (
-    <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
-      <header className="bg-white dark:bg-gray-800 shadow">
+    <div className="min-h-screen flex flex-col">
+      <header className="bg-[#2a2a2a] pixel-border">
         <nav className="container mx-auto px-4 py-4">
           <Navigation />
         </nav>
       </header>
 
-      <main className="container mx-auto px-4 py-8">
-        {children}
+      <main className="container mx-auto px-4 py-8 flex-grow">
+        <div className="animate-float">
+          {children}
+        </div>
       </main>
 
-      <footer className="bg-gray-100 dark:bg-gray-800 mt-auto">
+      <footer className="bg-[#2a2a2a] pixel-border mt-auto">
         <div className="container mx-auto px-4 py-8">
-          <p className="text-center text-gray-600 dark:text-gray-400">
+          <p className="text-center text-[#e0e0e0] pixel-text">
             © {new Date().getFullYear()} Hindu Panchang Calendar
           </p>
         </div>
