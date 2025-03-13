@@ -97,8 +97,10 @@ describe('DailyPanchang', () => {
     // Wait for initial data to load
     await screen.findByText('Tithi');
 
-    // Change date using getByDisplayValue
-    const dateInput = screen.getByDisplayValue('2025-03-13');
+    // Find the date input directly by its type attribute
+    const dateInput = screen.getByDisplayValue(/\d{4}-\d{2}-\d{2}/);
+    
+    // Change the date
     fireEvent.change(dateInput, { target: { value: '2024-03-21' } });
 
     // Verify new data is loaded after date change
