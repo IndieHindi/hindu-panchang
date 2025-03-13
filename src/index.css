@@ -87,4 +87,20 @@
 
 .animate-pulse-slow {
   animation: pulse 2s ease-in-out infinite;
+}
+
+/* Pixel Art Rendering Styles */
+.pixelated {
+  image-rendering: pixelated;
+  image-rendering: -moz-crisp-edges;
+  image-rendering: crisp-edges;
+}
+
+.pixel-card {
+  box-shadow: 4px 4px 0 rgba(0, 0, 0, 0.3);
+}
+
+/* Press Start 2P Font Integration */
+.pixel-font {
+  font-family: 'Press Start 2P', monospace;
 } 

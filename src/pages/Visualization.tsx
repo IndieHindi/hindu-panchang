@@ -1,7 +1,9 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { RocketLaunchIcon, SparklesIcon, ClockIcon } from '@heroicons/react/24/outline';
+import { RocketLaunchIcon, SparklesIcon, ClockIcon, StarIcon } from '@heroicons/react/24/outline';
 import InteractiveTimeline from '../components/Visualization/InteractiveTimeline';
+import PixelArtRashiVisualizer from '../components/Rashifal/PixelArtRashiVisualizer';
+import CelestialVisualization from '../components/Visualization/CelestialVisualization';
 
 const tabs = [
   {
@@ -11,12 +13,31 @@ const tabs = [
     description: 'Navigate through time to see how Tithis, Nakshatras, and other elements align',
   },
   {
+    id: 'rashi',
+    name: 'Rashi Visualization',
+    icon: StarIcon,
+    description: 'Explore the positions of planets in rashi chart with pixel art style',
+  },
+  {
     id: 'celestial',
     name: '3D Celestial Movements',
     icon: SparklesIcon,
     description: 'Watch the dance of celestial bodies and understand their influence on the Panchang',
     comingSoon: true,
   },
+];
+
+// Sample planetary positions for demonstration
+const samplePlanetPositions = [
+  { planet: 'Sun', rashi: 'Mesh', degree: 15 },
+  { planet: 'Moon', rashi: 'Vrishabha', degree: 10 },
+  { planet: 'Mercury', rashi: 'Mithuna', degree: 5 },
+  { planet: 'Venus', rashi: 'Karka', degree: 20 },
+  { planet: 'Mars', rashi: 'Simha', degree: 25 },
+  { planet: 'Jupiter', rashi: 'Dhanu', degree: 12 },
+  { planet: 'Saturn', rashi: 'Makara', degree: 8 },
+  { planet: 'Rahu', rashi: 'Kumbha', degree: 3 },
+  { planet: 'Ketu', rashi: 'Meena', degree: 3 },
 ];
 
 export default function Visualization() {
@@ -96,6 +117,38 @@ export default function Visualization() {
             exit={{ opacity: 0, x: 20 }}
           >
             <InteractiveTimeline />
+          </motion.div>
+        ) : activeTab === 'rashi' ? (
+          <motion.div
+            key="rashi"
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -20 }}
+            className="flex flex-col items-center"
+          >
+            <div className="max-w-lg mb-8 text-center">
+              <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-4">
+                Rashi Positions Visualizer
+              </h2>
+              <p className="text-gray-600 dark:text-gray-400">
+                This Nintendo-style pixel art visualization shows the positions of planets in different rashis.
+                Hover over any rashi to see more details!
+              </p>
+            </div>
+            
+            <div className="card p-8 max-w-3xl">
+              <PixelArtRashiVisualizer planetPositions={samplePlanetPositions} />
+              
+              <div className="mt-8 pt-4 border-t border-gray-200 dark:border-gray-700">
+                <h3 className="font-semibold mb-2">How to use this visualization:</h3>
+                <ul className="list-disc list-inside text-gray-600 dark:text-gray-400 space-y-1">
+                  <li>Hover over any rashi segment to highlight it</li>
+                  <li>Click on a rashi to select it and see which planets are positioned there</li>
+                  <li>Notice the unique pixel art representation for each planet and rashi</li>
+                  <li>For a personalized rashi chart, visit the Rashifal section and enter your birth details</li>
+                </ul>
+              </div>
+            </div>
           </motion.div>
         ) : (
           <motion.div
