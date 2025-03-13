@@ -3,6 +3,14 @@
   "private": true,
   "version": "0.1.0",
   "type": "module",
+  "description": "A modern web application for calculating and displaying Hindu Panchang (almanac) information",
+  "author": "Hindu Panchang Team",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/yourusername/hindu-panchang.git"
+  },
+  "homepage": "https://yourusername.github.io/hindu-panchang/",
   "scripts": {
     "dev": "vite",
     "build": "tsc && vite build",

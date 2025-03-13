@@ -1,5 +1,5 @@
 import React from 'react';
-import { render, screen, fireEvent } from '@testing-library/react';
+import { render, screen, fireEvent, within } from '@testing-library/react';
 import { BrowserRouter } from 'react-router-dom';
 import { describe, it, expect } from 'vitest';
 import Navigation from '../Navigation';
@@ -15,34 +15,47 @@ describe('Navigation', () => {
 
   it('renders all navigation links', () => {
     renderWithRouter();
-    expect(screen.getAllByText('Hindu Panchang')).toHaveLength(2);
-    expect(screen.getByText('Daily Panchang')).toBeInTheDocument();
-    expect(screen.getByText('Calendar')).toBeInTheDocument();
-    expect(screen.getByText('Rashifal')).toBeInTheDocument();
-    expect(screen.getByText('Festivals')).toBeInTheDocument();
-    expect(screen.getByText('Learn')).toBeInTheDocument();
-    expect(screen.getByText('Visualization')).toBeInTheDocument();
+    expect(screen.getAllByText('Hindu Panchang')).toHaveLength(2); // Desktop and mobile
+    
+    // Desktop links should be visible
+    const desktopNav = screen.getByRole('navigation', { hidden: true, name: /desktop/i });
+    expect(within(desktopNav).getByText('Daily Panchang')).toBeInTheDocument();
+    expect(within(desktopNav).getByText('Calendar')).toBeInTheDocument();
+    expect(within(desktopNav).getByText('Rashifal')).toBeInTheDocument();
+    expect(within(desktopNav).getByText('Festivals')).toBeInTheDocument();
+    expect(within(desktopNav).getByText('Learn')).toBeInTheDocument();
+    expect(within(desktopNav).getByText('Visualization')).toBeInTheDocument();
   });
 
   it('toggles mobile menu when clicking the menu button', () => {
-    renderWithRouter();
+    const { container } = renderWithRouter();
     
     // Initially mobile menu should be hidden
-    const mobileNav = screen.getByRole('navigation', { name: /mobile navigation/i });
-    const mobileLinks = screen.getByRole('list', { hidden: true });
-    expect(mobileLinks).not.toBeVisible();
+    const mobileLinks = screen.queryByRole('list');
+    expect(mobileLinks).not.toBeInTheDocument();
     
     // Click to open menu
     const menuButton = screen.getByRole('button', { name: /open main menu/i });
     fireEvent.click(menuButton);
     
-    // Menu should be visible
-    expect(mobileLinks).toBeVisible();
+    // Find the mobile menu container
+    const mobileNav = container.querySelector('nav.lg\\:hidden');
+    expect(mobileNav).not.toBeNull();
+    
+    if (mobileNav) {
+      // Menu items should be visible in the mobile nav
+      expect(within(mobileNav as HTMLElement).getByText('Daily Panchang')).toBeVisible();
+      expect(within(mobileNav as HTMLElement).getByText('Calendar')).toBeVisible();
+      expect(within(mobileNav as HTMLElement).getByText('Rashifal')).toBeVisible();
+      expect(within(mobileNav as HTMLElement).getByText('Festivals')).toBeVisible();
+      expect(within(mobileNav as HTMLElement).getByText('Learn')).toBeVisible();
+      expect(within(mobileNav as HTMLElement).getByText('Visualization')).toBeVisible();
+    }
     
     // Click to close menu
     fireEvent.click(menuButton);
     
-    // Menu should be hidden again
-    expect(mobileLinks).not.toBeVisible();
+    // Menu items should be hidden
+    expect(screen.queryByRole('list')).not.toBeInTheDocument();
   });
 }); 
