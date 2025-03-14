@@ -47,8 +47,10 @@ jobs:
     if: github.event_name == 'push' && github.ref == 'refs/heads/main'
     
     steps:
-    - uses: actions/checkout@v4
+    - name: Checkout 🛎️
+      uses: actions/checkout@v4
       with:
+        persist-credentials: false # Important for JamesIves/github-pages-deploy-action
         fetch-depth: 0
     
     - name: Set up Node.js
@@ -63,9 +65,16 @@ jobs:
     - name: Build
       run: npm run build
     
-    - name: Deploy to GitHub Pages
+    - name: Debug directory content
+      run: ls -la dist
+    
+    - name: Deploy to GitHub Pages 🚀
       uses: JamesIves/github-pages-deploy-action@v4
       with:
         folder: dist
         branch: gh-pages
-        clean: true 
+        clean: true
+        token: ${{ secrets.GITHUB_TOKEN }}
+        git-config-name: github-actions[bot]
+        git-config-email: github-actions[bot]@users.noreply.github.com
+        commit-message: "Deploy to GitHub Pages [skip ci]" 
