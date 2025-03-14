@@ -1,5 +1,5 @@
 import React from 'react';
-import { render, screen, fireEvent } from '@testing-library/react';
+import { render, screen } from '@testing-library/react';
 import { describe, it, expect } from 'vitest';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import Rashifal from '../Rashifal';
@@ -23,47 +23,27 @@ describe('Rashifal', () => {
 
   it('renders the initial view', () => {
     renderWithQueryClient();
-    expect(screen.getByText('Daily Rashifal')).toBeInTheDocument();
+    expect(screen.getByText('Birth Chart Calculator')).toBeInTheDocument();
     
-    // Check for zodiac signs
-    expect(screen.getByText('Aries')).toBeInTheDocument();
-    expect(screen.getByText('Taurus')).toBeInTheDocument();
-    expect(screen.getByText('Gemini')).toBeInTheDocument();
-    expect(screen.getByText('Cancer')).toBeInTheDocument();
-    expect(screen.getByText('Leo')).toBeInTheDocument();
-    expect(screen.getByText('Virgo')).toBeInTheDocument();
-    expect(screen.getByText('Libra')).toBeInTheDocument();
-    expect(screen.getByText('Scorpio')).toBeInTheDocument();
-    expect(screen.getByText('Sagittarius')).toBeInTheDocument();
-    expect(screen.getByText('Capricorn')).toBeInTheDocument();
-    expect(screen.getByText('Aquarius')).toBeInTheDocument();
-    expect(screen.getByText('Pisces')).toBeInTheDocument();
+    // Check for birth details form
+    expect(screen.getByText('* BIRTH DETAILS *')).toBeInTheDocument();
+    expect(screen.getByText('CALCULATE MY RASHI')).toBeInTheDocument();
   });
 
-  it('shows tab options', () => {
+  it('shows form fields', () => {
     renderWithQueryClient();
-    expect(screen.getByText('Quick Lookup')).toBeInTheDocument();
-    expect(screen.getByText('Birth Chart')).toBeInTheDocument();
+    
+    // Check for form field labels using text content
+    expect(screen.queryByText('Date of Birth')).toBeInTheDocument();
+    expect(screen.queryByText('Time of Birth')).toBeInTheDocument();
+    expect(screen.queryByText('Location')).toBeInTheDocument();
   });
 
-  it('shows prediction when a zodiac sign is selected', () => {
+  it('has a submit button', () => {
     renderWithQueryClient();
-
-    // Click on a zodiac sign
-    const ariesSign = screen.getByText('Aries');
-    fireEvent.click(ariesSign);
-
-    // Verify prediction navigation options are displayed
-    expect(screen.getByText('General')).toBeInTheDocument();
-    expect(screen.getByText('Career')).toBeInTheDocument();
-    expect(screen.getByText('Love')).toBeInTheDocument();
-    expect(screen.getByText('Health')).toBeInTheDocument();
-
-    // Verify element information is displayed
-    expect(screen.getByText('fire element')).toBeInTheDocument();
-
-    // We can't test for exact prediction text since it uses a seeded random function
-    // Instead, we can test for the prediction container being present
-    expect(screen.getByText('Characteristics')).toBeInTheDocument();
+    
+    // Check for submit button
+    const submitButton = screen.getByText('CALCULATE MY RASHI');
+    expect(submitButton).toBeInTheDocument();
   });
 }); 

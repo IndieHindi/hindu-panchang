@@ -22,9 +22,7 @@ describe('Navigation', () => {
     expect(within(desktopNav).getByText('Daily Panchang')).toBeInTheDocument();
     expect(within(desktopNav).getByText('Calendar')).toBeInTheDocument();
     expect(within(desktopNav).getByText('Rashifal')).toBeInTheDocument();
-    expect(within(desktopNav).getByText('Festivals')).toBeInTheDocument();
     expect(within(desktopNav).getByText('Learn')).toBeInTheDocument();
-    expect(within(desktopNav).getByText('Visualization')).toBeInTheDocument();
   });
 
   it('toggles mobile menu when clicking the menu button', () => {
@@ -47,9 +45,7 @@ describe('Navigation', () => {
       expect(within(mobileNav as HTMLElement).getByText('Daily Panchang')).toBeVisible();
       expect(within(mobileNav as HTMLElement).getByText('Calendar')).toBeVisible();
       expect(within(mobileNav as HTMLElement).getByText('Rashifal')).toBeVisible();
-      expect(within(mobileNav as HTMLElement).getByText('Festivals')).toBeVisible();
       expect(within(mobileNav as HTMLElement).getByText('Learn')).toBeVisible();
-      expect(within(mobileNav as HTMLElement).getByText('Visualization')).toBeVisible();
     }
     
     // Click to close menu

@@ -310,7 +310,15 @@ export default function MonthlyCalendar({ location, onFestivalNotificationToggle
   const handleEventNotificationClick = (e: React.MouseEvent, data: Festival | undefined) => {
     e.stopPropagation();
     if (data && onFestivalNotificationToggle) {
-      onFestivalNotificationToggle(data);
+      // Create a valid Festival object from the data
+      const festival: Festival = {
+        name: data.name,
+        type: data.type || 'major',
+        date: data.date || new Date(),
+        description: data.description || '',
+        significance: data.significance || ''
+      };
+      onFestivalNotificationToggle(festival);
     }
   };
 
