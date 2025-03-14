@@ -6,12 +6,26 @@ import BirthDetailsForm from '../components/Rashifal/BirthDetailsForm';
 import { BirthDetails } from '../services/RashiCalculationService';
 
 // Mock framer-motion to avoid test issues
-vi.mock('framer-motion', () => ({
-  motion: {
-    div: ({ children, ...props }: any) => <div {...props}>{children}</div>,
-    button: ({ children, ...props }: any) => <button {...props}>{children}</button>
-  }
-}));
+vi.mock('framer-motion', () => {
+  const MotionComponent = ({ children, ...props }: any) => {
+    const { 
+      initial, animate, exit, transition, whileHover, whileTap,
+      ...restProps
+    } = props;
+    return <div {...restProps}>{children}</div>;
+  };
+  
+  return {
+    motion: {
+      div: MotionComponent,
+      button: (props: any) => {
+        const { children, ...rest } = props;
+        return <button {...rest}>{children}</button>;
+      }
+    },
+    AnimatePresence: ({ children }: { children: React.ReactNode }) => <>{children}</>
+  };
+});
 
 describe('BirthDetailsForm Component', () => {
   const mockOnSubmit = vi.fn();
