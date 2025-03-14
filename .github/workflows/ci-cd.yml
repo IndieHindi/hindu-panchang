@@ -50,7 +50,7 @@ jobs:
     - name: Checkout 🛎️
       uses: actions/checkout@v4
       with:
-        persist-credentials: false # Important for JamesIves/github-pages-deploy-action
+        persist-credentials: false
         fetch-depth: 0
     
     - name: Set up Node.js
@@ -61,12 +61,24 @@ jobs:
     
     - name: Install dependencies
       run: npm ci
+      
+    - name: Clean dist directory
+      run: |
+        rm -rf dist
+        mkdir -p dist
     
+    - name: Add build timestamp
+      run: |
+        echo "// Build timestamp: $(date)" > src/buildInfo.ts
+        
     - name: Build
       run: npm run build
     
     - name: Debug directory content
       run: ls -la dist
+      
+    - name: Create .nojekyll file
+      run: touch dist/.nojekyll
     
     - name: Deploy to GitHub Pages 🚀
       uses: JamesIves/github-pages-deploy-action@v4
@@ -77,4 +89,5 @@ jobs:
         token: ${{ secrets.GITHUB_TOKEN }}
         git-config-name: github-actions[bot]
         git-config-email: github-actions[bot]@users.noreply.github.com
-        commit-message: "Deploy to GitHub Pages [skip ci]" 
+        commit-message: "Deploy to GitHub Pages [skip ci]"
+        force: true 
