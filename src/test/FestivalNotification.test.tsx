@@ -39,15 +39,6 @@ Object.defineProperty(window, 'Notification', {
   configurable: true,
 });
 
-// Mock a TimelineEvent for calendar testing
-interface TimelineEvent {
-  name: string;
-  type: string;
-  time: Date;
-  description?: string;
-  data?: Festival;
-}
-
 // Mock festival data
 const mockFestival: Festival = {
   name: 'Diwali',
