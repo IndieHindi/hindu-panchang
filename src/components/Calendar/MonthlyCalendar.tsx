@@ -14,7 +14,7 @@ import {
 } from '@heroicons/react/24/outline';
 import PanchangService from '../../services/PanchangService';
 import { DailyPanchang, Location, Festival } from '../../types/panchang';
-// @ts-ignore
+// Import CSS without type checking since it's a valid module
 import '../../styles/custom-scrollbar.css';
 
 interface MonthlyCalendarProps {
@@ -38,12 +38,12 @@ export default function MonthlyCalendar({ location, onFestivalNotificationToggle
   const [isCompactView, setIsCompactView] = useState(window.innerWidth < 768);
 
   // Calculate month days once when the month changes
-  const { startDate, endDate, days } = useMemo(() => {
+  const { _startDate, _endDate, days } = useMemo(() => {
     const start = startOfMonth(selectedMonth);
     const end = endOfMonth(selectedMonth);
     return {
-      startDate: start,
-      endDate: end,
+      _startDate: start,
+      _endDate: end,
       days: eachDayOfInterval({ start, end })
     };
   }, [selectedMonth]);
@@ -59,7 +59,7 @@ export default function MonthlyCalendar({ location, onFestivalNotificationToggle
   }, []);
 
   // Query for monthly panchang data
-  const { data: monthData, isLoading: isLoadingMonthData } = useQuery<DailyPanchang[]>({
+  const { data: monthData, isLoading } = useQuery<DailyPanchang[]>({
     queryKey: ['monthlyPanchang', format(selectedMonth, 'yyyy-MM'), location],
     queryFn: async () => {
       try {
@@ -75,6 +75,9 @@ export default function MonthlyCalendar({ location, onFestivalNotificationToggle
     enabled: !!location,
     staleTime: 24 * 60 * 60 * 1000, // Cache for a day since panchang data doesn't change frequently
   });
+
+  // Use the loading state if needed
+  const _isLoadingMonthData = isLoading;
 
   // Query for timeline data when a date is selected (now only for the exact selected date)
   const { data: timelineData, isLoading: isLoadingTimelineData } = useQuery<DailyPanchang | undefined>({
@@ -327,23 +330,19 @@ export default function MonthlyCalendar({ location, onFestivalNotificationToggle
 
     return (
       <motion.div
-        key={day.toISOString()}
-        whileHover={{ scale: 1.02 }}
-        whileTap={{ scale: 0.98 }}
+        key={format(day, 'yyyy-MM-dd')}
+        whileHover={{ scale: 1.05 }}
+        whileTap={{ scale: 0.95 }}
         onClick={() => handleDateClick(day)}
         className={`
-          ${isCompactView 
-            ? 'min-h-[45px] py-0.5 px-1' 
-            : 'min-h-[70px] sm:min-h-[100px] p-1 sm:p-2'
-          }
-          bg-white dark:bg-gray-800 cursor-pointer 
-          ${!isCurrentMonth && 'opacity-50'}
-          ${isCurrentDay && 'ring-2 ring-primary-500'}
-          ${isSelected && 'bg-primary-50 dark:bg-primary-900'}
-          ${hasFestival(day) && !isSelected && 'bg-rose-50 dark:bg-rose-900/20'}
+          relative p-2 text-center cursor-pointer rounded-lg
+          ${isSameMonth(day, selectedMonth) ? 'text-gray-100' : 'text-gray-500'}
+          ${isToday(day) ? 'bg-purple-900 text-white' : ''}
+          ${selectedDate && isSameDay(day, selectedDate) ? 'ring-2 ring-yellow-400' : ''}
+          hover:bg-gray-800 transition-colors
         `}
-        aria-selected={isSelected}
-        aria-current={isCurrentDay ? 'date' : undefined}
+        aria-selected={selectedDate ? isSameDay(day, selectedDate) : undefined}
+        aria-current={isToday(day) ? 'date' : undefined}
       >
         <div className="flex justify-between items-start">
           <span className={`text-xs sm:text-base font-medium ${isCurrentDay && 'text-primary-600'}`}>
