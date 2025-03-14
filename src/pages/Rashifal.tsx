@@ -1,8 +1,10 @@
 import React, { useState, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
+import { StarIcon } from '@heroicons/react/24/outline';
 import BirthDetailsForm from '../components/Rashifal/BirthDetailsForm';
 import PixelArtRashiVisualizer from '../components/Rashifal/PixelArtRashiVisualizer';
 import RashiDetailCard from '../components/Rashifal/RashiDetailCard';
+import RashiHelpSection from '../components/Rashifal/RashiHelpSection';
 import rashiCalculationService, { RashiResult, BirthDetails } from '../services/RashiCalculationService';
 
 /**
@@ -42,53 +44,73 @@ const Rashifal: React.FC = () => {
   }, []);
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-indigo-900 to-purple-900">
-      <div className="max-w-6xl mx-auto px-4 py-8">
-        <motion.h1 
-          initial={{ opacity: 0, y: -20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6 }}
-          className="text-3xl md:text-4xl font-bold text-center text-white mb-8"
-          style={{ 
-            fontFamily: "'Press Start 2P', monospace",
-            textShadow: '3px 3px 0 #4B0082, 6px 6px 0 rgba(0,0,0,0.2)'
-          }}
+    <motion.div
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      transition={{ duration: 0.5 }}
+      className="space-y-6"
+    >
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+        <motion.h1
+          initial={{ x: -20 }}
+          animate={{ x: 0 }}
+          className="text-2xl font-bold text-gray-900 dark:text-white flex items-center gap-2"
         >
+          <StarIcon className="h-8 w-8 text-primary-600" />
           Birth Chart Calculator
         </motion.h1>
+        
+        {!showRashiResult && (
+          <div className="bg-white dark:bg-gray-800 p-4 rounded-lg shadow-md">
+            <p className="text-sm text-gray-600 dark:text-gray-300">
+              Enter your birth details to generate your personalized birth chart
+            </p>
+          </div>
+        )}
+      </div>
 
-        <AnimatePresence mode="wait">
-          {!showRashiResult ? (
-            <BirthDetailsForm 
-              onSubmit={handleBirthDetailsSubmit}
-              isLoading={isLoading}
-            />
-          ) : (
-            <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              className="space-y-8"
-            >
-              <div className="flex justify-center mb-4">
-                <motion.button
-                  whileHover={{ scale: 1.05 }}
-                  whileTap={{ scale: 0.95 }}
-                  onClick={() => setShowRashiResult(false)}
-                  className="px-4 py-2 bg-gray-800 text-yellow-300 rounded-md border-2 border-gray-700"
-                  style={{ fontFamily: "'Press Start 2P', monospace", fontSize: '12px' }}
-                >
-                  « Back to Form
-                </motion.button>
-              </div>
-              
-              <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-                {rashiResult && (
-                  <>
+      <AnimatePresence mode="wait">
+        {!showRashiResult ? (
+          <BirthDetailsForm 
+            onSubmit={handleBirthDetailsSubmit}
+            isLoading={isLoading}
+          />
+        ) : (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            className="space-y-6"
+          >
+            <div className="flex justify-end mb-4">
+              <motion.button
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
+                onClick={() => setShowRashiResult(false)}
+                className="px-4 py-2 bg-primary-600 text-white rounded-md hover:bg-primary-700 flex items-center gap-2"
+              >
+                <span>« Back to Form</span>
+              </motion.button>
+            </div>
+            
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+              {rashiResult && (
+                <>
+                  <div className="card hover:shadow-lg transition-shadow duration-300">
+                    <h2 className="text-lg font-semibold mb-4 flex items-center gap-2">
+                      <StarIcon className="h-5 w-5 text-primary-600" />
+                      Birth Chart Visualization
+                    </h2>
                     <PixelArtRashiVisualizer
                       userRashi={rashiResult.mainRashi}
                       planetPositions={rashiResult.planetPositions}
                     />
-                    
+                  </div>
+                  
+                  <div className="card hover:shadow-lg transition-shadow duration-300">
+                    <h2 className="text-lg font-semibold mb-4 flex items-center gap-2">
+                      <StarIcon className="h-5 w-5 text-primary-600" />
+                      Your Rashi Details
+                    </h2>
                     <RashiDetailCard 
                       details={{
                         mainRashi: rashiResult.mainRashi,
@@ -100,14 +122,17 @@ const Rashifal: React.FC = () => {
                         luckyNumbers: rashiResult.luckyNumbers
                       }}
                     />
-                  </>
-                )}
-              </div>
-            </motion.div>
-          )}
-        </AnimatePresence>
-      </div>
-    </div>
+                  </div>
+                </>
+              )}
+            </div>
+            
+            {/* Add How to Use section */}
+            <RashiHelpSection />
+          </motion.div>
+        )}
+      </AnimatePresence>
+    </motion.div>
   );
 };
 

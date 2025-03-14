@@ -10,9 +10,7 @@ const navigation = [
   { name: 'Daily Panchang', href: '/daily' },
   { name: 'Calendar', href: '/calendar' },
   { name: 'Rashifal', href: '/rashifal' },
-  { name: 'Festivals', href: '/festivals' },
   { name: 'Learn', href: '/learn' },
-  { name: 'Visualization', href: '/visualization' },
 ];
 
 /**

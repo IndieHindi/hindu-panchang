@@ -4,8 +4,6 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import DailyPanchang from './pages/DailyPanchang';
 import MonthlyCalendar from './components/Calendar/MonthlyCalendar';
 import Rashifal from './pages/Rashifal';
-import FestivalCalendar from './components/Festivals/FestivalCalendar';
-import Visualization from './pages/Visualization';
 import Layout from './components/Layout';
 import Learn from './pages/Learn';
 
@@ -29,6 +27,25 @@ const queryClient = new QueryClient({
   },
 });
 
+// Handle festival notifications
+const handleFestivalNotification = (festival: any) => {
+  if (Notification.permission === 'granted') {
+    new Notification(`Festival Notification: ${festival.name}`, {
+      body: `${festival.description || festival.significance}\nDate: ${new Date(festival.date).toLocaleDateString()}`,
+      icon: '/om.svg'
+    });
+  } else if (Notification.permission !== 'denied') {
+    Notification.requestPermission().then(permission => {
+      if (permission === 'granted') {
+        new Notification(`Festival Notification: ${festival.name}`, {
+          body: `${festival.description || festival.significance}\nDate: ${new Date(festival.date).toLocaleDateString()}`,
+          icon: '/om.svg'
+        });
+      }
+    });
+  }
+};
+
 function App() {
   return (
     <QueryClientProvider client={queryClient}>
@@ -39,31 +56,15 @@ function App() {
             <Route path="/daily" element={<DailyPanchang />} />
             <Route 
               path="/calendar" 
-              element={<MonthlyCalendar location={defaultLocation} />} 
+              element={
+                <MonthlyCalendar 
+                  location={defaultLocation} 
+                  onFestivalNotificationToggle={handleFestivalNotification}
+                />
+              } 
             />
             <Route path="/rashifal" element={<Rashifal />} />
-            <Route 
-              path="/festivals" 
-              element={<FestivalCalendar onNotificationToggle={festival => {
-                if (Notification.permission === 'granted') {
-                  new Notification(`Festival Notification: ${festival.name}`, {
-                    body: `${festival.description}\nDate: ${festival.date.toLocaleDateString()}`,
-                    icon: '/om.svg'
-                  });
-                } else if (Notification.permission !== 'denied') {
-                  Notification.requestPermission().then(permission => {
-                    if (permission === 'granted') {
-                      new Notification(`Festival Notification: ${festival.name}`, {
-                        body: `${festival.description}\nDate: ${festival.date.toLocaleDateString()}`,
-                        icon: '/om.svg'
-                      });
-                    }
-                  });
-                }
-              }} />} 
-            />
             <Route path="/learn" element={<Learn />} />
-            <Route path="/visualization" element={<Visualization />} />
           </Routes>
         </Layout>
       </Router>
