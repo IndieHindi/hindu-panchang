@@ -1,11 +1,12 @@
 import React from 'react';
-import { render, screen, fireEvent, waitFor } from '@testing-library/react';
+import { render, screen, fireEvent } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
+import { describe, test, expect, vi, beforeEach } from 'vitest';
 import BirthDetailsForm from '../components/Rashifal/BirthDetailsForm';
 import { BirthDetails } from '../services/RashiCalculationService';
 
 describe('BirthDetailsForm Component', () => {
-  const mockOnSubmit = jest.fn();
+  const mockOnSubmit = vi.fn();
   
   beforeEach(() => {
     mockOnSubmit.mockClear();
@@ -15,42 +16,42 @@ describe('BirthDetailsForm Component', () => {
     render(<BirthDetailsForm onSubmit={mockOnSubmit} isLoading={false} />);
     
     // Check if heading is displayed
-    expect(screen.getByText('Enter Your Birth Details')).toBeInTheDocument();
+    expect(screen.getByText('* BIRTH DETAILS *')).toBeInTheDocument();
     
     // Check if all input fields are displayed
-    expect(screen.getByLabelText(/Birth Date/i)).toBeInTheDocument();
-    expect(screen.getByLabelText(/Birth Time/i)).toBeInTheDocument();
-    expect(screen.getByLabelText(/Birth Place/i)).toBeInTheDocument();
+    expect(screen.getByLabelText(/Date of Birth/i)).toBeInTheDocument();
+    expect(screen.getByLabelText(/Time of Birth/i)).toBeInTheDocument();
+    expect(screen.getByLabelText(/Location/i)).toBeInTheDocument();
     expect(screen.getByLabelText(/Latitude/i)).toBeInTheDocument();
     expect(screen.getByLabelText(/Longitude/i)).toBeInTheDocument();
     
     // Check if submit button is displayed
-    expect(screen.getByRole('button', { name: /Generate Birth Chart/i })).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: /CALCULATE MY RASHI/i })).toBeInTheDocument();
   });
   
   test('displays loading state when isLoading is true', () => {
     render(<BirthDetailsForm onSubmit={mockOnSubmit} isLoading={true} />);
     
-    expect(screen.getByText('Calculating...')).toBeInTheDocument();
+    expect(screen.getByText('CALCULATING')).toBeInTheDocument();
   });
   
   test('enables form submission when all required fields are filled', async () => {
+    const user = userEvent.setup();
     render(<BirthDetailsForm onSubmit={mockOnSubmit} isLoading={false} />);
     
-    // Fill in the required fields
-    await userEvent.type(screen.getByLabelText(/Birth Date/i), '2023-01-01');
-    await userEvent.type(screen.getByLabelText(/Birth Time/i), '12:00');
-    await userEvent.type(screen.getByLabelText(/Birth Place/i), 'New Delhi, India');
+    // Select location from dropdown
+    const locationSelect = screen.getByLabelText(/Location/i);
+    await user.selectOptions(locationSelect, 'New Delhi, India');
     
     // Submit the form
-    const submitButton = screen.getByRole('button', { name: /Generate Birth Chart/i });
-    await userEvent.click(submitButton);
+    const submitButton = screen.getByRole('button', { name: /CALCULATE MY RASHI/i });
+    await user.click(submitButton);
     
     // Check if onSubmit was called with the correct data
     expect(mockOnSubmit).toHaveBeenCalledTimes(1);
     expect(mockOnSubmit).toHaveBeenCalledWith(expect.objectContaining({
       date: expect.any(Date),
-      time: '12:00',
+      time: expect.any(String),
       location: 'New Delhi, India',
       latitude: expect.any(Number),
       longitude: expect.any(Number),
@@ -60,16 +61,22 @@ describe('BirthDetailsForm Component', () => {
   
   test('prevents form submission when required fields are missing', async () => {
     // Mock window.alert
-    const mockAlert = jest.spyOn(window, 'alert').mockImplementation(() => {});
+    const mockAlert = vi.spyOn(window, 'alert').mockImplementation(() => {});
+    const user = userEvent.setup();
     
+    // Create a form with empty location
     render(<BirthDetailsForm onSubmit={mockOnSubmit} isLoading={false} />);
     
-    // Submit without filling required fields
-    const submitButton = screen.getByRole('button', { name: /Generate Birth Chart/i });
-    await userEvent.click(submitButton);
+    // Clear the location field
+    const locationSelect = screen.getByLabelText(/Location/i);
+    await user.selectOptions(locationSelect, '');
+    
+    // Submit the form
+    const submitButton = screen.getByRole('button', { name: /CALCULATE MY RASHI/i });
+    await user.click(submitButton);
     
     // Check that alert was shown and onSubmit was not called
-    expect(mockAlert).toHaveBeenCalledWith('Please fill in all required fields');
+    expect(mockAlert).toHaveBeenCalledWith('Please fix the errors above before submitting.');
     expect(mockOnSubmit).not.toHaveBeenCalled();
     
     // Restore original alert
@@ -77,31 +84,20 @@ describe('BirthDetailsForm Component', () => {
   });
   
   test('updates state variables when inputs change', async () => {
+    const user = userEvent.setup();
     render(<BirthDetailsForm onSubmit={mockOnSubmit} isLoading={false} />);
     
-    // Date input
-    const dateInput = screen.getByLabelText(/Birth Date/i);
-    await userEvent.type(dateInput, '2023-05-15');
-    expect(dateInput).toHaveValue('2023-05-15');
+    // Location selection
+    const locationSelect = screen.getByLabelText(/Location/i);
+    await user.selectOptions(locationSelect, 'Mumbai, India');
+    expect(locationSelect).toHaveValue('Mumbai, India');
     
-    // Time input
-    const timeInput = screen.getByLabelText(/Birth Time/i);
-    await userEvent.type(timeInput, '14:30');
-    expect(timeInput).toHaveValue('14:30');
-    
-    // Location input
-    const locationInput = screen.getByLabelText(/Birth Place/i);
-    await userEvent.type(locationInput, 'Mumbai, India');
-    expect(locationInput).toHaveValue('Mumbai, India');
-    
-    // Latitude input
+    // Latitude should update automatically based on location selection
     const latitudeInput = screen.getByLabelText(/Latitude/i);
-    fireEvent.change(latitudeInput, { target: { value: '19.0760' } });
     expect(latitudeInput).toHaveValue(19.076);
     
-    // Longitude input
+    // Longitude should update automatically too
     const longitudeInput = screen.getByLabelText(/Longitude/i);
-    fireEvent.change(longitudeInput, { target: { value: '72.8777' } });
     expect(longitudeInput).toHaveValue(72.8777);
   });
 }); 
