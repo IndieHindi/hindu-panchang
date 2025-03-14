@@ -1,17 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
-
-/**
- * Birth details for astrological calculations
- */
-export interface BirthDetails {
-  date: Date;
-  time: string;
-  latitude: number;
-  longitude: number;
-  timezone: string;
-  location: string;
-}
+import { CalendarIcon, ClockIcon, MapPinIcon } from '@heroicons/react/24/outline';
+import { BirthDetails } from '../../services/RashiCalculationService';
 
 /**
  * Interface representing form validation errors
@@ -26,7 +16,7 @@ interface FormErrors {
 
 interface BirthDetailsFormProps {
   onSubmit: (details: BirthDetails) => void;
-  isLoading?: boolean;
+  isLoading: boolean;
 }
 
 /**
@@ -41,7 +31,7 @@ interface BirthDetailsFormProps {
  * @TODO: Add geocoding API integration to auto-populate coordinates based on location name
  * @TODO: Add timezone detection based on coordinates
  */
-const BirthDetailsForm: React.FC<BirthDetailsFormProps> = ({ onSubmit, isLoading = false }) => {
+const BirthDetailsForm: React.FC<BirthDetailsFormProps> = ({ onSubmit, isLoading }) => {
   // Predefined locations for easy selection
   const predefinedLocations = [
     { name: 'New Delhi, India', lat: 28.6139, lng: 77.2090, tz: 'Asia/Kolkata' },
