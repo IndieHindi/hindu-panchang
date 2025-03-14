@@ -27,7 +27,7 @@ interface TimelineEvent {
   type: 'sunrise' | 'sunset' | 'moonrise' | 'moonset' | 'tithi' | 'nakshatra' | 'yoga' | 'karana' | 'festival';
   name: string;
   description?: string;
-  data?: any; // For additional data like festival info
+  data?: Festival; // Festival is the only type needed here based on usage
 }
 
 export default function MonthlyCalendar({ location, onFestivalNotificationToggle }: MonthlyCalendarProps) {
@@ -258,7 +258,7 @@ export default function MonthlyCalendar({ location, onFestivalNotificationToggle
     }
   }, []);
 
-  const hasFestival = useCallback((date: Date) => {
+  const _hasFestival = useCallback((date: Date) => {
     const dayInfo = getDayInfo(date);
     return dayInfo?.festivals && dayInfo.festivals.length > 0;
   }, [getDayInfo]);
@@ -307,10 +307,12 @@ export default function MonthlyCalendar({ location, onFestivalNotificationToggle
     setSelectedEvent(event);
   }, []);
 
-  const handleEventNotificationClick = useCallback((e: React.MouseEvent, festival: Festival) => {
+  const handleEventNotificationClick = (e: React.MouseEvent, data: Festival | undefined) => {
     e.stopPropagation();
-    onFestivalNotificationToggle?.(festival);
-  }, [onFestivalNotificationToggle]);
+    if (data && onFestivalNotificationToggle) {
+      onFestivalNotificationToggle(data);
+    }
+  };
 
   const handleCloseModal = useCallback(() => {
     setSelectedEvent(null);
@@ -323,9 +325,9 @@ export default function MonthlyCalendar({ location, onFestivalNotificationToggle
   // Render helper components
   const renderDayContent = useCallback((day: Date) => {
     const dayInfo = getDayInfo(day);
-    const isCurrentMonth = isSameMonth(day, selectedMonth);
+    const _isCurrentMonth = isSameMonth(day, selectedMonth);
     const isCurrentDay = isToday(day);
-    const isSelected = selectedDate && isSameDay(day, selectedDate);
+    const _isSelected = selectedDate && isSameDay(day, selectedDate);
     const festivalCount = getFestivalCount(day);
 
     return (
@@ -384,7 +386,6 @@ export default function MonthlyCalendar({ location, onFestivalNotificationToggle
     selectedMonth, 
     selectedDate, 
     isCompactView, 
-    hasFestival, 
     getFestivalCount, 
     getLunarPhaseIcon, 
     handleDateClick
@@ -656,7 +657,11 @@ export default function MonthlyCalendar({ location, onFestivalNotificationToggle
                     
                     {onFestivalNotificationToggle && (
                       <button
-                        onClick={() => onFestivalNotificationToggle(selectedEvent.data)}
+                        onClick={() => {
+                          if (selectedEvent.data) {
+                            onFestivalNotificationToggle(selectedEvent.data as Festival);
+                          }
+                        }}
                         className="btn btn-secondary btn-xs sm:btn-sm flex items-center gap-1"
                         aria-label={`Set notification for ${selectedEvent.name}`}
                       >

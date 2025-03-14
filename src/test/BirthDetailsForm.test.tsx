@@ -3,13 +3,12 @@ import { render, screen, fireEvent } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { describe, test, expect, vi, beforeEach } from 'vitest';
 import BirthDetailsForm from '../components/Rashifal/BirthDetailsForm';
-import { BirthDetails } from '../services/RashiCalculationService';
 
 // Mock framer-motion to avoid test issues
 vi.mock('framer-motion', () => {
-  const MotionComponent = ({ children, ...props }: any) => {
+  const MotionComponent = ({ children, ...props }: React.PropsWithChildren<Record<string, unknown>>) => {
     const { 
-      initial, animate, exit, transition, whileHover, whileTap,
+      _initial, _animate, _exit, _transition, _whileHover, _whileTap,
       ...restProps
     } = props;
     return <div {...restProps}>{children}</div>;
@@ -18,7 +17,7 @@ vi.mock('framer-motion', () => {
   return {
     motion: {
       div: MotionComponent,
-      button: (props: any) => {
+      button: (props: React.PropsWithChildren<Record<string, unknown>>) => {
         const { children, ...rest } = props;
         return <button {...rest}>{children}</button>;
       }

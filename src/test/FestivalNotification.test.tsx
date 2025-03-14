@@ -7,14 +7,14 @@ import type { Festival, Location } from '../types/panchang';
 
 // Mock framer-motion
 vi.mock('framer-motion', () => {
-  const MotionComponent = ({ children, ...props }: any) => {
+  const MotionComponent = ({ children, ...props }: React.PropsWithChildren<Record<string, unknown>>) => {
     return <div {...props}>{children}</div>;
   };
   
   return {
     motion: {
       div: MotionComponent,
-      button: (props: any) => {
+      button: (props: React.PropsWithChildren<Record<string, unknown>>) => {
         const { children, ...rest } = props;
         return <button {...rest}>{children}</button>;
       }
@@ -29,7 +29,7 @@ Object.defineProperty(window, 'Notification', {
   value: class {
     static permission = 'granted';
     static requestPermission = vi.fn().mockResolvedValue('granted');
-    constructor(...args: any[]) {
+    constructor(...args: [string, NotificationOptions]) {
       mockNotification(...args);
     }
   }
